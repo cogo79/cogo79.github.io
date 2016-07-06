@@ -1,0 +1,42 @@
+<html>
+<head>
+	<title>Javascript test</title>
+	<style>
+		div {
+			float: left;
+			clear: both;
+		}
+	</style>
+</head>
+<body>
+	<script>
+		var fileGetter = (function() {
+			function Class(files) {
+				this.files = files;
+			}
+			var p = Class.prototype;
+			p.getFiles = function(selection) {
+				var _this = this;
+				for (var i=0;i<selection.length;i++) {
+					var file = selection[i];
+					(function(name) {
+						var req = new XMLHttpRequest();
+						req.onreadystatechange = function() {
+							if (req.readyState === 4) {
+								var t = document.createElement('div')
+								t.textContent = name + ': ' + req.responseText;
+								document.body.appendChild(t);
+							}
+						}
+						req.open('POST', _this.files[name], true);
+						req.send('data');
+					} (file));
+				}
+			}
+			return Class;
+		})();
+		var x = new fileGetter({'fruits':'fruitlist','animals':'animallist',
+		                        'beverages':'beveragelist','cities':'citylist'});
+		x.getFiles(['beverages','cities','fruits']);
+	</script>
+</body>
